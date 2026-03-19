@@ -51,7 +51,8 @@ app.use("/admin", adminRouter);
 app.use("/course", courseRouter);
 app.use("/chatbot", chatbotRouter);
 
-ConnectDB();
-app.listen(port, () => {
-  console.log("Server is running on http://localhost:3000");
+ConnectDB().then(() => {
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
 });
