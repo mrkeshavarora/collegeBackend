@@ -1,0 +1,23 @@
+import express from 'express'
+import { createCourse, deleteCourse, getAllCourses, updateCourse, getCourseById } from '../controller/courseContoller.js'
+import upload from '../middleware/courseImageUpload.js'
+
+import { authMiddleware, adminMiddleware } from '../middleware/authMiddleware.js'
+
+const courseRouter = express.Router()
+
+// Create course
+courseRouter.post('/create', authMiddleware, adminMiddleware, upload.single('photo'), createCourse)
+
+// Get all courses
+courseRouter.get('/all', getAllCourses)
+// Get single course
+courseRouter.get('/getSingle/:id', getCourseById)
+
+// Update course
+courseRouter.put('/update/:id', authMiddleware, adminMiddleware, upload.single('photo'), updateCourse)
+
+// Delete course
+courseRouter.delete('/delete/:id', authMiddleware, adminMiddleware, deleteCourse)
+
+export default courseRouter

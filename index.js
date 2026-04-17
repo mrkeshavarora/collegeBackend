@@ -1,0 +1,61 @@
+import express from "express";
+import dotenv from "dotenv";
+dotenv.config();
+import path from "path";
+import { fileURLToPath } from "url";
+import userRouter from "./src/Routes/userRouter.js";
+import { ConnectDB } from "./src/DB/database.js";
+import collegeRouter from "./src/Routes/collegeRouter.js";
+import galleryRouter from "./src/Routes/galleryRouter.js";
+import noticeRouter from "./src/Routes/noticeRouter.js";
+import studentResourceRouter from "./src/Routes/studentResourceRouter.js";
+import facultyRouter from "./src/Routes/facultyRouter.js";
+import adminRouter from "./src/Routes/adminRouter.js";
+import courseRouter from "./src/Routes/courseRouter.js";
+import eventRouter from "./src/Routes/eventRouter.js";
+import chatbotRouter from "./src/Routes/chatbotRouter.js";
+import departmentRouter from "./src/Routes/departmentRouter.js";
+import nonTeachingFacultyRouter from "./src/Routes/nonTeachingFacultyRouter.js";
+
+import cors from "cors";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+const port =  process.env.PORT || 3000;
+
+app.use(cors());
+app.use(express.json());
+
+// Log incoming requests to help debug connectivity
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  next();
+});
+
+// Serve uploaded images as static files
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// app.get("/", (req, res) => {
+//   res.send("Hello World!");
+// });
+
+app.use("/user", userRouter);
+app.use("/college", collegeRouter);
+app.use("/studentresource", studentResourceRouter);
+app.use("/notice", noticeRouter);
+app.use("/gallery", galleryRouter);
+app.use("/faculty", facultyRouter);
+app.use("/event", eventRouter);
+app.use("/admin", adminRouter);
+app.use("/course", courseRouter);
+app.use("/chatbot", chatbotRouter);
+app.use("/department", departmentRouter);
+app.use("/nonteaching", nonTeachingFacultyRouter);
+
+ConnectDB().then(() => {
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
+});
