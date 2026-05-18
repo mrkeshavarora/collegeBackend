@@ -35,8 +35,8 @@ export const getChatResponse = async (req, res) => {
         } else if (lowerMessage.includes("event") || lowerMessage.includes("function") || lowerMessage.includes("activity")) {
             if (events.length === 0) localReply = "We don't have any upcoming events right now.";
             else localReply = "Here are some upcoming events:\n" + events.map(e => `• ${e.title || e.name}`).join("\n");
-        } else if (lowerMessage.includes("college") || lowerMessage.includes("about") || lowerMessage.includes("info")) {
-            localReply = colleges.length > 0 ? (colleges[0].description || "This is our official college portal.") : "This is our official college portal.";
+        } else if (lowerMessage.includes("who made you") || lowerMessage.includes("who created you") || lowerMessage.includes("creator")) {
+            localReply = "I was created by Keshav Arora, a final-year BCA student at DAV College, Amritsar.";
         }
 
         if (localReply) {
@@ -50,9 +50,11 @@ export const getChatResponse = async (req, res) => {
             return res.status(200).json({ reply: "Please set your GEMINI_API_KEY to answer outside knowledge questions." });
         }
 
-        const context = `You are "College Mate" assistant. 
+        const collegeName = colleges.length > 0 ? colleges[0].name : "our college";
+        const context = `You are "College Mate", the official assistant for ${collegeName}. 
         Data: Courses:${JSON.stringify(courses)}, Faculty:${JSON.stringify(faculties)}, Colleges:${JSON.stringify(colleges)}, Notices:${JSON.stringify(notices)}, Events:${JSON.stringify(events)}.
-        Answer nicely. If not about college, use general knowledge.`;
+        Answer nicely and feel free to mention the college name (${collegeName}) in your response. 
+        IMPORTANT: You must ONLY answer questions related to the college, courses, faculty, notices, events, admissions, or student life. If the user asks a question that is entirely unrelated to the college or education, politely refuse to answer and remind them that you are only here to help with college-related queries. Do NOT provide answers to irrelevant or general knowledge questions outside the scope of the college.`;
 
         const modelsToTry = ["gemini-3-flash-preview", "gemini-3-pro-preview"];
         let lastError = null;
